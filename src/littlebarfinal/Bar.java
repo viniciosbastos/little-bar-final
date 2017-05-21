@@ -42,7 +42,9 @@ public class Bar {
         if (full) {
             mutex.release();
             entrarFilaDeEspera();
+            mutex.acquire();
         }
+        
         i = getChair();
         this.empty -= 1;
         if (this.empty == 0) {

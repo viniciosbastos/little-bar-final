@@ -135,9 +135,9 @@ public class Client extends Thread {
         vBox.getChildren().add(this.nomeLabel);
         
         HBox hBox = new HBox();
-        this.tcLabel.setPrefWidth(100);
-        this.tbLabel.setPrefWidth(100);
-        hBox.getChildren().addAll(this.tcLabel, this.tbLabel);
+        this.tcLabel.setPrefWidth(50);
+        this.tbLabel.setPrefWidth(50);
+        hBox.getChildren().addAll(new Label("Casa: "), this.tcLabel, new Label("Bar: "), this.tbLabel);
         
         
         vBox.getChildren().add(hBox);
