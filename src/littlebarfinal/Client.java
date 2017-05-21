@@ -18,43 +18,40 @@ import javafx.scene.image.ImageView;
  *
  * @author Vinicios
  */
-public class Client extends Thread{
-    
+public class Client extends Thread {
+
     public ImageView imageView;
-    
-    private Image[] upSprites;
-    private Image[] downSprites;
-    private Image[] rightSprites;
-    private Image[] leftSprites;
-    
-    private Image upSpriteDefault;
-    private Image downSpriteDefault;
-    private Image rightSpriteDefault;
-    private Image leftSpriteDefault;
-    
-    public Client() throws URISyntaxException {
+
+    protected Image[] upSprites;
+    protected Image[] downSprites;
+    protected Image[] rightSprites;
+    protected Image[] leftSprites;
+
+    protected Image upSpriteDefault;
+    protected Image downSpriteDefault;
+    protected Image rightSpriteDefault;
+    protected Image leftSpriteDefault;
+
+    private int tc, tb;
+    private String nome;
+
+    private int offset;
+
+    public Client(int tc, int tb, String nome) throws URISyntaxException {
+        this.tc = tc;
+        this.tb = tb;
+        this.nome = nome;
+
         this.imageView = new ImageView();
         this.imageView.setX(7);
         this.imageView.setY(30);
-        
-
-        this.upSprites = new Image[] {new Image(getURI("/images/1/up-1.png")), new Image(getURI("/images/1/up-2.png"))};
-        this.downSprites = new Image[] {new Image(getURI("/images/1/down-1.png")), new Image(getURI("/images/1/down-2.png"))};
-        this.leftSprites = new Image[] {new Image(getURI("/images/1/left-0.png")), new Image(getURI("/images/1/left-1.png"))};
-        this.rightSprites = new Image[] {new Image(getURI("/images/1/right-0.png")), new Image(getURI("/images/1/right-1.png"))};
-
-        upSpriteDefault = new Image(getURI("/images/1/up-0.png"));
-        downSpriteDefault = new Image(getURI("/images/1/down-0.png"));
-        rightSpriteDefault = new Image(getURI("/images/1/left-0.png"));
-        leftSpriteDefault = new Image(getURI("/images/1/right-0.png"));
     }
-    
-    private String getURI(String nome) throws URISyntaxException {
+
+    protected String getURI(String nome) throws URISyntaxException {
         return getClass().getResource(nome).toURI().toString();
     }
-    
-    @Override
-    public void run() {
+
+    private void animate() {
         Platform.runLater(() -> {
             SequentialTransition st = new SequentialTransition();
             st.getChildren().addAll(
@@ -63,5 +60,44 @@ public class Client extends Thread{
             );
             st.play();
         });
+    }
+
+    private void enterQueue() {
+        Platform.runLater(() -> {
+            this.imageView.setX(100);
+            this.imageView.setY(10);
+        });
+    }
+
+    private void goBar() {
+        Platform.runLater(() -> {
+            this.imageView.setX(200);
+            this.imageView.setY(100 + (14 * this.offset));
+        });
+    }
+
+    private void goHome() {
+        Platform.runLater(() -> {
+            this.imageView.setX(100 + (14 * this.offset));
+            this.imageView.setY(200);
+        });
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                enterQueue();
+                this.offset = LittleBarFinal.bar.sitDown();
+                System.out.println(this.nome + " sentou na cadeira " + this.offset);
+                goBar();
+                Thread.sleep(tb * 1000);
+                LittleBarFinal.bar.getUp(this.offset);
+                goHome();
+                Thread.sleep(tc * 1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
