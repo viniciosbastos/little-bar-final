@@ -29,7 +29,7 @@ import javafx.stage.Stage;
  */
 public class LittleBarFinal extends Application {
 
-    public static Bar bar;
+    public static Bar2 bar;
     private Group root;
     private List<Client> clientes = new ArrayList();
     
@@ -121,7 +121,7 @@ public class LittleBarFinal extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {        
-        bar = new Bar(2);
+        bar = new Bar2(2);
         launch(args);
     }
 

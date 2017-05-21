@@ -111,14 +111,18 @@ public class Client extends Thread {
 
                 this.offset = LittleBarFinal.bar.sitDown();
                 updateStatus("No Bar");
+                System.out.println(nome + " no bar");
                 goBar();
-                countTime(tb, tbLabel);
+                //countTime(tb, tbLabel);
+                Thread.sleep(1000*tb);
                 updateLabel(tbLabel, tb);
 
-                LittleBarFinal.bar.getUp(this.offset);
+                LittleBarFinal.bar.getUp(offset);
                 updateStatus("Em Casa");
+                System.out.println(nome + " em casa");
                 goHome();
-                countTime(tc, tcLabel);
+                //countTime(tc, tcLabel);
+                Thread.sleep(1000*tc);
                 updateLabel(tcLabel, tc);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
