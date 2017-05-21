@@ -42,7 +42,7 @@ public class Client extends Thread {
     private String nome;
     private String status;
 
-    private int offset;
+    private int chair;
     
     private Label tcLabel, tbLabel, nomeLabel, statusLabel;
        
@@ -91,13 +91,13 @@ public class Client extends Thread {
     private void goBar() {
         Platform.runLater(() -> {
             this.label.setLayoutX(200);
-            this.label.setLayoutY(30 + (40 * this.offset));
+            this.label.setLayoutY(30 + (40 * this.chair));
         });
     }
 
     private void goHome() {
         Platform.runLater(() -> {
-            this.label.setLayoutX(100 + (16 * this.offset));
+            this.label.setLayoutX(100 + (16 * this.chair));
             this.label.setLayoutY(200);
         });
     }
@@ -108,8 +108,8 @@ public class Client extends Thread {
             try {                
                 enterQueue();
                 updateStatus("Na Fila");
-
-                this.offset = LittleBarFinal.bar.sitDown();
+                LittleBarFinal.bar.sitDown(); 
+                this.chair = LittleBarFinal.bar.getChair();
                 updateStatus("No Bar");
                 System.out.println(nome + " no bar");
                 goBar();
@@ -117,7 +117,7 @@ public class Client extends Thread {
                 Thread.sleep(1000*tb);
                 updateLabel(tbLabel, tb);
 
-                LittleBarFinal.bar.getUp(offset);
+                LittleBarFinal.bar.getUp(chair);
                 updateStatus("Em Casa");
                 System.out.println(nome + " em casa");
                 goHome();

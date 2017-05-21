@@ -18,7 +18,7 @@ public class Bar2 {
     private int cadeiras;
     private int qtdCliente;
     private boolean cheio;
-    
+
     Semaphore mutex;
     boolean[] cadeirasOcupadas;
 
@@ -34,40 +34,47 @@ public class Bar2 {
         this.cheio = false;
     }
 
-    public int sitDown() throws InterruptedException {
+    public void sitDown() throws InterruptedException {
         mutex.acquire();
-        int i = -1;
-        if (!cheio && filaDeEspera.isEmpty()) {
-            i = getChair();
+        if (!cheio) {
             this.qtdCliente += 1;
             if (this.qtdCliente == this.cadeiras) {
                 this.cheio = true;
             }
             mutex.release();
         } else {
-            mutex.release();            
+            mutex.release();
             entrarFilaDeEspera();
-            return sitDown();
+            sitDown();
         }
-        return i;
     }
-    
+
+    public void prioridade() throws InterruptedException {
+        mutex.acquire();
+        this.qtdCliente += 1;
+        if (this.qtdCliente == this.cadeiras) {
+            this.cheio = true;
+        }
+        mutex.release();
+    }
+
     public void getUp(int chair) throws InterruptedException {
         mutex.acquire();
         this.qtdCliente -= 1;
-        this.cadeirasOcupadas[chair-1] = false;
+        this.cadeirasOcupadas[chair - 1] = false;
         if (this.cheio && this.qtdCliente == 0) {
             this.cheio = false;
             mutex.release();
-            
+
             for (int i = 0; i < this.cadeiras; i++) {
                 chamarFilaDeEspera();
             }
-        } else
+        } else {
             mutex.release();
+        }
     }
 
-    private int getChair() {
+    public int getChair() {
         int chair = -1;
         for (int i = 0; i < this.cadeiras; i++) {
             if (!this.cadeirasOcupadas[i]) {
@@ -80,8 +87,8 @@ public class Bar2 {
     }
 
     private void entrarFilaDeEspera() throws InterruptedException {
-        mutex.acquire();
         Semaphore s = new Semaphore(0);
+        mutex.acquire();
         filaDeEspera.add(s);
         mutex.release();
         s.acquire();
