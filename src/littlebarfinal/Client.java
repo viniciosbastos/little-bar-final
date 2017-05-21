@@ -11,8 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -21,6 +26,7 @@ import javafx.scene.image.ImageView;
 public class Client extends Thread {
 
     public ImageView imageView;
+    public Label label;
 
     protected Image[] upSprites;
     protected Image[] downSprites;
@@ -34,8 +40,12 @@ public class Client extends Thread {
 
     private int tc, tb;
     private String nome;
+    private String status;
 
     private int offset;
+    
+    private Label tcLabel, tbLabel, nomeLabel, statusLabel;
+       
 
     public Client(int tc, int tb, String nome) throws URISyntaxException {
         this.tc = tc;
@@ -45,6 +55,15 @@ public class Client extends Thread {
         this.imageView = new ImageView();
         this.imageView.setX(7);
         this.imageView.setY(30);
+        this.label = new Label();
+        this.label.setText(this.nome);
+        this.label.setGraphic(this.imageView);
+        this.label.setContentDisplay(ContentDisplay.TOP);
+        
+        this.tcLabel = new Label("" + this.tc);
+        this.tbLabel = new Label("" + this.tb);         
+        this.nomeLabel = new Label("Nome: " + this.nome);
+        this.statusLabel = new Label(this.status);
     }
 
     protected String getURI(String nome) throws URISyntaxException {
@@ -64,40 +83,85 @@ public class Client extends Thread {
 
     private void enterQueue() {
         Platform.runLater(() -> {
-            this.imageView.setX(100);
-            this.imageView.setY(10);
+            this.label.setLayoutX(100);
+            this.label.setLayoutY(10);
         });
     }
 
     private void goBar() {
         Platform.runLater(() -> {
-            this.imageView.setX(200);
-            this.imageView.setY(100 + (14 * this.offset));
+            this.label.setLayoutX(200);
+            this.label.setLayoutY(30 + (40 * this.offset));
         });
     }
 
     private void goHome() {
         Platform.runLater(() -> {
-            this.imageView.setX(100 + (14 * this.offset));
-            this.imageView.setY(200);
+            this.label.setLayoutX(100 + (16 * this.offset));
+            this.label.setLayoutY(200);
         });
     }
 
     @Override
     public void run() {
         while (true) {
-            try {
+            try {                
                 enterQueue();
+                updateStatus("Na Fila");
+
                 this.offset = LittleBarFinal.bar.sitDown();
-                System.out.println(this.nome + " sentou na cadeira " + this.offset);
+                updateStatus("No Bar");
                 goBar();
-                Thread.sleep(tb * 1000);
+                countTime(tb, tbLabel);
+                updateLabel(tbLabel, tb);
+
                 LittleBarFinal.bar.getUp(this.offset);
+                updateStatus("Em Casa");
                 goHome();
-                Thread.sleep(tc * 1000);
+                countTime(tc, tcLabel);
+                updateLabel(tcLabel, tc);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    
+    public VBox getDetails() {
+        VBox vBox = new VBox();
+        vBox.setStyle("-fx-border-style: solid inside;" + 
+                      "-fx-border-width: 1;" +
+                      "-fx-border-color: gray;");
+        
+        vBox.getChildren().add(this.nomeLabel);
+        
+        HBox hBox = new HBox();
+        this.tcLabel.setPrefWidth(100);
+        this.tbLabel.setPrefWidth(100);
+        hBox.getChildren().addAll(this.tcLabel, this.tbLabel);
+        
+        
+        vBox.getChildren().add(hBox);
+        vBox.getChildren().add(this.statusLabel);                
+        return vBox;
+    }
+    
+    private void updateLabel(Label l, int value) {
+        Platform.runLater(() -> {
+            l.setText("" + value);
+        });
+    }
+
+    private void updateStatus(String status) {
+        Platform.runLater(() -> {
+            this.statusLabel.setText(status);
+        });
+    }
+    
+    private void countTime(int seconds, Label toUpdate) {
+        for (int i = seconds; i > 0; i--) {
+            long start = System.currentTimeMillis();
+            while ((System.currentTimeMillis() - start) != 1000){}
+            updateLabel(toUpdate, i-1);
         }
     }
 }
