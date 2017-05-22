@@ -108,21 +108,17 @@ public class Client extends Thread {
             try {                
                 enterQueue();
                 updateStatus("Na Fila");
-                LittleBarFinal.bar.sitDown(); 
+                LittleBarFinal.bar.sitDown();
                 this.chair = LittleBarFinal.bar.getChair();
                 updateStatus("No Bar");
-                System.out.println(nome + " no bar");
                 goBar();
-                //countTime(tb, tbLabel);
-                Thread.sleep(1000*tb);
+                countTime(tb, tbLabel);
                 updateLabel(tbLabel, tb);
 
                 LittleBarFinal.bar.getUp(chair);
                 updateStatus("Em Casa");
-                System.out.println(nome + " em casa");
                 goHome();
-                //countTime(tc, tcLabel);
-                Thread.sleep(1000*tc);
+                countTime(tc, tcLabel);
                 updateLabel(tcLabel, tc);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -164,7 +160,7 @@ public class Client extends Thread {
     private void countTime(int seconds, Label toUpdate) {
         for (int i = seconds; i > 0; i--) {
             long start = System.currentTimeMillis();
-            while ((System.currentTimeMillis() - start) != 1000){}
+            while ((System.currentTimeMillis() - start) < 1000){}
             updateLabel(toUpdate, i-1);
         }
     }

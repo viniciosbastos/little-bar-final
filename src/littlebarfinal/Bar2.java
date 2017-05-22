@@ -23,6 +23,7 @@ public class Bar2 {
     boolean[] cadeirasOcupadas;
 
     List<Semaphore> filaDeEspera;
+    boolean wait;
 
     public Bar2(int cadeiras) {
         this.cadeiras = cadeiras;
@@ -32,10 +33,12 @@ public class Bar2 {
         mutex = new Semaphore(1);
         filaDeEspera = new ArrayList();
         this.cheio = false;
+        this.wait = false;
     }
 
     public void sitDown() throws InterruptedException {
         mutex.acquire();
+        
         if (!cheio) {
             this.qtdCliente += 1;
             if (this.qtdCliente == this.cadeiras) {

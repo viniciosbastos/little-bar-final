@@ -9,6 +9,7 @@ package littlebarfinal;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -17,9 +18,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -29,7 +30,7 @@ import javafx.stage.Stage;
  */
 public class LittleBarFinal extends Application {
 
-    public static Bar2 bar;
+    public static Bar3 bar;
     private Group root;
     private List<Client> clientes = new ArrayList();
     
@@ -38,6 +39,17 @@ public class LittleBarFinal extends Application {
     
     @Override
     public void start(Stage primaryStage) throws URISyntaxException {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Inicialização do LitteBar");
+        dialog.setHeaderText("Calma, estamos quase abrindo!");
+        dialog.setContentText("Quantas cadeiras tem seu bar?");
+        
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            int c = Integer.parseInt(result.get());
+            bar.setCadeira(c);
+            bar.start();
+        }
         root = new Group();
 
         Scene scene = new Scene(root, 300, 250);
@@ -120,8 +132,8 @@ public class LittleBarFinal extends Application {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {        
-        bar = new Bar2(2);
+    public static void main(String[] args) {       
+        bar = new Bar3();
         launch(args);
     }
 
