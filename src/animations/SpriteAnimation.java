@@ -21,10 +21,10 @@ public class SpriteAnimation extends Transition {
     private ImageView imageView;    
     private Image[] sprites;
     
-    public SpriteAnimation(ImageView imageView, Image[] sprites) {
+    public SpriteAnimation(ImageView imageView, Image[] sprites, int duration) {
         this.imageView = imageView;
         this.sprites = sprites;
-        setCycleDuration(Duration.seconds(5));
+        setCycleDuration(Duration.seconds(duration));
     }
     
     @Override

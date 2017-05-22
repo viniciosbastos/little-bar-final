@@ -5,7 +5,6 @@ package littlebarfinal;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -33,38 +34,44 @@ public class LittleBarFinal extends Application {
     public static Bar3 bar;
     private Group root;
     private List<Client> clientes = new ArrayList();
-    
+
     TextField nomeText;
     TextField tcText, tbText;
-    
+
     @Override
     public void start(Stage primaryStage) throws URISyntaxException {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Inicialização do LitteBar");
         dialog.setHeaderText("Calma, estamos quase abrindo!");
         dialog.setContentText("Quantas cadeiras tem seu bar?");
-        
+
         Optional<String> result = dialog.showAndWait();
+        int c = 0;
         if (result.isPresent()) {
-            int c = Integer.parseInt(result.get());
+            c = Integer.parseInt(result.get());
             bar.setCadeira(c);
             bar.start();
         }
         root = new Group();
-
-        Scene scene = new Scene(root, 300, 250);
+        String backName = "/images/backgrounds/back-" + c + ".png";
+        ImageView background = new ImageView(new Image(getURI(backName)));
+        
+//        Client cliente = new ClientBrendan(1,1,"A");
+        root.getChildren().add(background);
+//        root.getChildren().add(cliente.imageView);
+        Scene scene = new Scene(root, 259, 250);
 
         primaryStage.setTitle("Little Bar");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
+
         createSecondaryStage();
     }
-    
+
     private void createSecondaryStage() {
         VBox vBox = new VBox();
         vBox.setSpacing(2);
-        
+
         VBox control = createClientForm(vBox);
 
         vBox.getChildren().add(control);
@@ -74,28 +81,28 @@ public class LittleBarFinal extends Application {
         secondaryStage.setTitle("Hello World!");
         secondaryStage.setScene(scene);
         secondaryStage.show();
-        
+
     }
-    
+
     private VBox createClientForm(VBox parent) {
         VBox vBox = new VBox();
         vBox.setPrefWidth(parent.getPrefWidth());
-        
+
         GridPane grid = new GridPane();
         grid.setPrefWidth(parent.getPrefWidth());
         ColumnConstraints cons1 = new ColumnConstraints(50, 50, 50);
         ColumnConstraints cons2 = new ColumnConstraints(150, 150, 150);
         grid.getColumnConstraints().addAll(cons1, cons2);
-        
+
         Label nomeLabel = new Label("Nome");
         nomeText = new TextField();
-                
+
         Label tcLabel = new Label("Casa");
         tcText = new TextField();
-                
+
         Label tbLabel = new Label("Bar");
         tbText = new TextField();
-                
+
         grid.add(nomeLabel, 0, 0);
         grid.add(nomeText, 1, 0);
         grid.add(tcLabel, 0, 1);
@@ -103,7 +110,7 @@ public class LittleBarFinal extends Application {
         grid.add(tbLabel, 0, 2);
         grid.add(tbText, 1, 2);
         vBox.getChildren().add(grid);
-        
+
         Button btn = new Button();
         btn.setText("Tabela de Clientes");
         btn.prefWidthProperty().bind(vBox.widthProperty());
@@ -114,25 +121,29 @@ public class LittleBarFinal extends Application {
                 int tb = Integer.parseInt(tbText.getText());
                 Client c = new ClientBrendan(tc, tb, nome);
                 clientes.add(c);
-                root.getChildren().add(c.label);
+                root.getChildren().add(c.imageView);
                 parent.getChildren().add(c.getDetails());
                 c.start();
-                
+
                 nomeText.clear();
                 tcText.clear();
                 tbText.clear();
             } catch (URISyntaxException ex) {
                 Logger.getLogger(LittleBarFinal.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });        
+        });
         vBox.getChildren().add(btn);
         return vBox;
+    }
+
+    private String getURI(String nome) throws URISyntaxException {
+        return getClass().getResource(nome).toURI().toString();
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {       
+    public static void main(String[] args) {
         bar = new Bar3();
         launch(args);
     }

@@ -18,12 +18,12 @@ import javafx.util.Duration;
  */
 public class AnimationFactory {
     
-    public static Animation createAnimation(int toX, int toY, ImageView imageView, Image[] sprites) {
+    public static Animation createAnimation(int toX, int toY, ImageView imageView, Image[] sprites, int duration) {
         TranslateTransition tt = new TranslateTransition();        
         tt.setByX(toX);
         tt.setByY(toY);
         tt.setCycleCount(1);
-        tt.setDuration(Duration.seconds(5));
+        tt.setDuration(Duration.seconds(duration));
         tt.setNode(imageView);
         tt.setOnFinished(e -> {
             imageView.setX(imageView.getX() + imageView.getTranslateX());
@@ -32,7 +32,7 @@ public class AnimationFactory {
             imageView.setTranslateY(0);
         });
         
-        SpriteAnimation sa = new SpriteAnimation(imageView, sprites);        
+        SpriteAnimation sa = new SpriteAnimation(imageView, sprites, duration);        
         sa.setCycleCount(1);      
         
         ParallelTransition pt = new ParallelTransition();
