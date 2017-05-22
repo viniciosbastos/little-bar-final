@@ -31,7 +31,7 @@ import javafx.stage.Stage;
  */
 public class LittleBarFinal extends Application {
 
-    public static Bar3 bar;
+    public static Bar bar;
     private Group root;
     private List<Client> clientes = new ArrayList();
 
@@ -50,15 +50,13 @@ public class LittleBarFinal extends Application {
         if (result.isPresent()) {
             c = Integer.parseInt(result.get());
             bar.setCadeira(c);
-            bar.start();
         }
         root = new Group();
         String backName = "/images/backgrounds/back-" + c + ".png";
         ImageView background = new ImageView(new Image(getURI(backName)));
         
-//        Client cliente = new ClientBrendan(1,1,"A");
         root.getChildren().add(background);
-//        root.getChildren().add(cliente.imageView);
+        
         Scene scene = new Scene(root, 259, 250);
 
         primaryStage.setTitle("Little Bar");
@@ -78,7 +76,7 @@ public class LittleBarFinal extends Application {
 
         Scene scene = new Scene(vBox, 200, 600);
         Stage secondaryStage = new Stage();
-        secondaryStage.setTitle("Hello World!");
+        secondaryStage.setTitle("Tabela de Clientes");
         secondaryStage.setScene(scene);
         secondaryStage.show();
 
@@ -112,22 +110,24 @@ public class LittleBarFinal extends Application {
         vBox.getChildren().add(grid);
 
         Button btn = new Button();
-        btn.setText("Tabela de Clientes");
+        btn.setText("Criar cliente");
         btn.prefWidthProperty().bind(vBox.widthProperty());
         btn.setOnAction(e -> {
             try {
                 String nome = nomeText.getText();
                 int tc = Integer.parseInt(tcText.getText());
                 int tb = Integer.parseInt(tbText.getText());
-                Client c = new ClientBrendan(tc, tb, nome);
+                Client c = ClientMaker.createClient(tc, tb, nome);
                 clientes.add(c);
-                root.getChildren().add(c.imageView);
+                root.getChildren().add(c.label);
                 parent.getChildren().add(c.getDetails());
                 c.start();
 
                 nomeText.clear();
                 tcText.clear();
                 tbText.clear();
+                
+                System.out.println("Cliente " + nome + " criado.");
             } catch (URISyntaxException ex) {
                 Logger.getLogger(LittleBarFinal.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -144,7 +144,7 @@ public class LittleBarFinal extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        bar = new Bar3();
+        bar = new Bar();
         launch(args);
     }
 

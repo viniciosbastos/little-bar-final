@@ -5,8 +5,6 @@
  */
 package littlebarfinal;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -14,92 +12,60 @@ import java.util.concurrent.Semaphore;
  * @author Vinicios
  */
 public class Bar {
-    int cadeiras;
-    int empty;
-    boolean full;
-    List<Semaphore> filaDeEspera;
-    boolean[] cadeirasOcupadas;
+
+    private int cadeiras;
+    private int qtdCliente;
+    private boolean cheio;
 
     Semaphore mutex;
+    boolean[] cadeirasOcupadas;
 
-    public Bar(int c) {
-        this.cadeiras = c;
-        this.empty = c;
-        this.full = false;
-        this.cadeirasOcupadas = new boolean[c];
+    public Semaphore semaforo;
+
+    public Bar() {
+        this.qtdCliente = 0;
 
         mutex = new Semaphore(1);
-        filaDeEspera = new ArrayList();
+        this.cheio = false;
+    }
+    
+    public void setCadeira(int c) {
+        this.cadeiras = c;
+        this.cadeirasOcupadas = new boolean[this.cadeiras];
+        semaforo = new Semaphore(this.cadeiras, true);
     }
 
-    public void setCadeiras(int cadeiras) {
-        this.cadeiras = cadeiras;
-    }
-
-    public int sitDown() throws InterruptedException {       
-        mutex.acquire();        
-        int i = 0;
-        if (full) {
-            mutex.release();
-            entrarFilaDeEspera();
-            mutex.acquire();
-        }
-        
-        i = getChair();
-        this.empty -= 1;
-        if (this.empty == 0) {
-            full = true;
-        }
+    public void sitDown() throws InterruptedException {
+        semaforo.acquire();
+        mutex.acquire();
+        this.qtdCliente += 1;
+        if (this.qtdCliente == this.cadeiras)
+            this.cheio = true;
         mutex.release();
-        return i;
     }
 
     public void getUp(int chair) throws InterruptedException {
         mutex.acquire();
+        this.qtdCliente -= 1;
         this.cadeirasOcupadas[chair-1] = false;
-        if (full) {
-            this.empty += 1;
-            if (this.empty == this.cadeiras) {
-                full = false;
-                if (!filaDeEspera.isEmpty()) {
-                    mutex.release();
-                    for (int i = 0; i < this.cadeiras; i++) {
-                        chamarFilaDeEspera();
-                    }
-                    return;
-                }
-            }
-            mutex.release();
-        } else {
-            this.empty += 1;
-            if (this.empty > this.cadeiras)
-                this.empty = this.cadeiras;
-            mutex.release();
+        if (this.qtdCliente == 0) {
+            this.cheio = false;
+            this.semaforo.release(this.cadeiras);
         }
+        mutex.release();
     }
 
-    private void entrarFilaDeEspera() throws InterruptedException {
-        Semaphore s = new Semaphore(0);
-        filaDeEspera.add(s);
-        s.acquire();
-    }
-    
-    private void chamarFilaDeEspera() {
-        if (!filaDeEspera.isEmpty()) {
-            Semaphore s = filaDeEspera.remove(0);
-            s.release();
-        }
-    }
-    
-    private int getChair() {
-        int chair = 0;
+    public int getChair() throws InterruptedException {
+        mutex.acquire();
+        int chair = -1;
         for (int i = 0; i < this.cadeiras; i++) {
             if (!this.cadeirasOcupadas[i]) {
                 this.cadeirasOcupadas[i] = true;
-                chair = i+1;
+                chair = i + 1;
                 break;
             }
         }
+        mutex.release();
         return chair;
     }
 }

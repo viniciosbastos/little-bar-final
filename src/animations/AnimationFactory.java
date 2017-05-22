@@ -8,6 +8,7 @@ package animations;
 import javafx.animation.Animation;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
@@ -18,18 +19,18 @@ import javafx.util.Duration;
  */
 public class AnimationFactory {
     
-    public static Animation createAnimation(int toX, int toY, ImageView imageView, Image[] sprites, int duration) {
+    public static Animation createAnimation(int toX, int toY, Label label, ImageView imageView, Image[] sprites, int duration) {
         TranslateTransition tt = new TranslateTransition();        
         tt.setByX(toX);
         tt.setByY(toY);
         tt.setCycleCount(1);
         tt.setDuration(Duration.seconds(duration));
-        tt.setNode(imageView);
+        tt.setNode(label);
         tt.setOnFinished(e -> {
-            imageView.setX(imageView.getX() + imageView.getTranslateX());
-            imageView.setY(imageView.getY() + imageView.getTranslateY());
-            imageView.setTranslateX(0);
-            imageView.setTranslateY(0);
+            label.setLayoutX(label.getLayoutX() + label.getTranslateX());
+            label.setLayoutY(label.getLayoutY() + label.getTranslateY());
+            label.setTranslateX(0);
+            label.setTranslateY(0);
         });
         
         SpriteAnimation sa = new SpriteAnimation(imageView, sprites, duration);        
