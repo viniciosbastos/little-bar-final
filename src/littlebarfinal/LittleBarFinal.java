@@ -40,11 +40,13 @@ public class LittleBarFinal extends Application {
 
     @Override
     public void start(Stage primaryStage) throws URISyntaxException {
+        // Cria a caixa de diálogo para informar a quantidade de cadeiras
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Inicialização do LitteBar");
         dialog.setHeaderText("Calma, estamos quase abrindo!");
         dialog.setContentText("Quantas cadeiras tem seu bar?");
-
+        
+        //"Segura" a execução do restante do método até que o OK seja pressionado
         Optional<String> result = dialog.showAndWait();
         int c = 0;
         if (result.isPresent()) {

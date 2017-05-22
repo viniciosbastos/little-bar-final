@@ -11,7 +11,6 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -19,8 +18,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 /**
  *
@@ -59,9 +56,6 @@ public class Client extends Thread {
 
         this.imageView = new ImageView();
 
-//        this.imageView.setX(213);
-//        this.imageView.setY(55);
-//
         this.tcLabel = new Label("" + this.tc);
         this.tbLabel = new Label("" + this.tb);
         this.nomeLabel = new Label("Nome: " + this.nome);
@@ -72,7 +66,7 @@ public class Client extends Thread {
 
         this.label = new Label();
         this.label.setText(this.nome);
-        this.label.setGraphic(this.imageView);
+        this.label.setGraphic(this.imageView);      //Define a imagem quem vai ficar na label
         this.label.setContentDisplay(ContentDisplay.RIGHT);
         this.label.setLayoutX(30);
         this.label.setLayoutY(10);
@@ -88,30 +82,30 @@ public class Client extends Thread {
             try {
                 System.out.println("Cliente " + nome + " está na fila.");
                 updateStatus("Na Fila");
-                goToQueue();
-                animation.acquire();
+                goToQueue();            // Método para animar o caminho até o inicio da fila
+                animation.acquire();    // Semáforo para segurar a thread enquanto a animação nao termina, valor inicial 0. Assim que der acquire ela dorme
 
-                LittleBarFinal.bar.sitDown();
-                this.chair = LittleBarFinal.bar.getChair();
+                LittleBarFinal.bar.sitDown();   //Tenta entrar no bar
+                this.chair = LittleBarFinal.bar.getChair(); //Depois de entrar, pergunta ao bar qual cadeira está disponível
                 System.out.println("Cliente " + nome + " está procurando cadeira.");
                 updateStatus("Procurando Cadeira");
-                goToBar();
+                goToBar();              // Anima até a cadeira
                 animation.acquire();
                 
                 System.out.println("Cliente " + nome + " no bar.");
                 updateStatus("No Bar");
-                countTime(tb, tbLabel);
+                countTime(tb, tbLabel); // Método para substituir o Thread.sleep(), fazendo ele contar o tempo 
                 updateLabel(tbLabel, tb);
 
                 LittleBarFinal.bar.getUp(chair);
-                leave();
                 System.out.println("Cliente " + nome + " saindo do bar.");
                 updateStatus("Indo Embora");
+                leave();        //anima até a saída
                 animation.acquire();
 
-                countTime(tc, tcLabel);
                 updateStatus("Em Casa");
                 System.out.println("Cliente " + nome + " em casa.");
+                countTime(tc, tcLabel);
                 updateLabel(tcLabel, tc);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -119,11 +113,18 @@ public class Client extends Thread {
         }
     }
 
+    // Método que retorna a caixa de detalhes que aparece na tela.
     public VBox getDetails() {
         VBox vBox = new VBox();
-        vBox.setStyle("-fx-border-style: solid inside;"
+        vBox.setStyle(
+                  "-fx-border-style: solid inside;"
                 + "-fx-border-width: 1;"
-                + "-fx-border-color: gray;");
+                + "-fx-border-color: gray;"
+                + "-fx-border-radius: 10px;"
+                + "-fx-padding: 5px;"
+                + "-fx-background-color: white;"
+                + "-fx-background-radius: 10px;"
+                + "-fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);");
 
         vBox.getChildren().add(this.nomeLabel);
 
