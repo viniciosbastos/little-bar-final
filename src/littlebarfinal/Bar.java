@@ -48,19 +48,22 @@ public class Bar {
         mutex.acquire();
         this.qtdCliente -= 1;                      //Diminui quantidade de clientes presentes no bar naquele momento
         this.cadeirasOcupadas[chair-1] = false;    //Libera a cadeira que o cliente estava para que outro possa usar
-        if (this.qtdCliente == 0) {                //Se qtdCliente == 0 o último cliente acabou de sair, então acorda os clentes esperando
+        if (this.qtdCliente == 0) {                //Se qtdCliente == 0 o último cliente acabou de sair, então acorda os clientes esperando
             this.cheio = false;
             this.semaforo.release(this.cadeiras);  //semaforo.release(N), faz acordar N clientes. Para não precisar de 'FOR'
         }
         mutex.release();
     }
 
+    //Função que procura uma cadeira livre no array cadeirasOcupadas
     public int getChair() throws InterruptedException {
         mutex.acquire();
-        int chair = -1;
+        int chair = -1; //valor fora do possivel para nao interferir caso nao encontre nenhuma cadeira vazia
+        
+        //percorre todas as posições do vetor até encontrar a primeira posição liberada, então retorna seu índice+1 (para fazer a animação até a cadeira)
         for (int i = 0; i < this.cadeiras; i++) {
             if (!this.cadeirasOcupadas[i]) {
-                this.cadeirasOcupadas[i] = true;
+                this.cadeirasOcupadas[i] = true;    //define a posição livre encontrada como ocupada pelo novo cliente
                 chair = i + 1;
                 break;
             }
