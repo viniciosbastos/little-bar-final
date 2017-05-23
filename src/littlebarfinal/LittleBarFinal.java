@@ -63,8 +63,9 @@ public class LittleBarFinal extends Application {
 
         primaryStage.setTitle("Little Bar");
         primaryStage.setScene(scene);
+        primaryStage.setX(400);
+        primaryStage.setY(200);
         primaryStage.show();
-
         createSecondaryStage();
     }
 
@@ -80,8 +81,9 @@ public class LittleBarFinal extends Application {
         Stage secondaryStage = new Stage();
         secondaryStage.setTitle("Tabela de Clientes");
         secondaryStage.setScene(scene);
+        secondaryStage.setX(665);
+        secondaryStage.setY(200);
         secondaryStage.show();
-
     }
 
     private VBox createClientForm(VBox parent) {
