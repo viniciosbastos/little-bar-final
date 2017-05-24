@@ -78,7 +78,7 @@ public class Client extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while (!isInterrupted()) {
             try {
                 System.out.println("Cliente " + nome + " está na fila.");
                 updateStatus("Na Fila");
@@ -108,7 +108,8 @@ public class Client extends Thread {
                 countTime(tc, tcLabel);
                 updateLabel(tcLabel, tc);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Thread foi interrompida");
+                Thread.currentThread().interrupt();
             }
         }
     }

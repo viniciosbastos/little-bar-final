@@ -66,6 +66,7 @@ public class LittleBarFinal extends Application {
         primaryStage.setX(400);
         primaryStage.setY(200);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> stopThreads());
         createSecondaryStage();
     }
 
@@ -150,6 +151,12 @@ public class LittleBarFinal extends Application {
     public static void main(String[] args) {
         bar = new Bar();
         launch(args);
+    }
+
+    private void stopThreads() {
+//       this.clientes.forEach(p -> p.interrupt());
+       for (Client c : this.clientes) 
+           c.interrupt();
     }
 
 }
